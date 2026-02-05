@@ -14,9 +14,12 @@ public class OrderItem {
     private Integer quantity;
     private Double price;
 
-    public OrderItem(){}
+    public OrderItem(){
+        this.id = new OrderItemPk();
+    }
 
     public OrderItem(Order order, Product product, Integer quantity, Double price) {
+        this.id = new OrderItemPk();
         id.setOrder(order);
         id.setProduct(product);
         this.quantity = quantity;
