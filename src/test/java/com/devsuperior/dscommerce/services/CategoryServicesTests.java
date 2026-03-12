@@ -1,6 +1,6 @@
 package com.devsuperior.dscommerce.services;
 
-import com.devsuperior.dscommerce.CategoryFactory;
+import com.devsuperior.dscommerce.factory.CategoryFactory;
 import com.devsuperior.dscommerce.dto.CategoryDTO;
 import com.devsuperior.dscommerce.entities.Category;
 import com.devsuperior.dscommerce.repositories.CategoryRepository;

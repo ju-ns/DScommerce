@@ -1,4 +1,4 @@
-package com.devsuperior.dscommerce;
+package com.devsuperior.dscommerce.factory;
 
 import com.devsuperior.dscommerce.entities.Category;
 
