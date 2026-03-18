@@ -28,9 +28,88 @@
 - JWT  
 
 ---
+
+## 🧪 Testes Unitários — Camada de Service
+
+![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+
+A aplicação conta com cobertura de testes unitários na camada de serviço utilizando **JUnit 5** e **Mockito**, sem subir contexto Spring (via `@ExtendWith(SpringExtension.class)`).
+
+A cobertura é verificada com **JaCoCo** e atinge **100% na camada de service**, validando métodos, branches e linhas de todos os serviços da aplicação.
+
+> ▶️ Para gerar o relatório de cobertura localmente:
+> ```bash
+> ./mvnw test jacoco:report
+> ```
+> O relatório HTML será gerado em `target/site/jacoco/index.html`.
+
+---
+
+### ✅ CategoryService
+
+| Teste | Cenário |
+|-------|---------|
+| `findAllShouldReturnListCategoryDTO` | Deve retornar uma lista de `CategoryDTO` com os dados corretos |
+
+---
+
+### ✅ AuthService
+
+| Teste | Cenário |
+|-------|---------|
+| `validateSelfOrAdminShouldDoNothingWhenAdminLogged` | Não deve lançar exceção quando o usuário logado é ADMIN |
+| `validateSelfOrAdminShouldDoNothingWhenSelfLogged` | Não deve lançar exceção quando o próprio usuário acessa o recurso |
+| `validateSelfOrAdminThrowsForbiddenExceptionWhenOtherClientLogged` | Deve lançar `ForbiddenException` quando outro cliente tenta acessar |
+
+---
+
+### ✅ UserService
+
+| Teste | Cenário |
+|-------|---------|
+| `loadUserByUsernameShouldReturnUserDetailsWhenUserExists` | Deve retornar `UserDetails` quando o usuário existir |
+| `loadUserByUsernameShouldThrowUsernameNotFoundExceptionWhenUserDoesNotExists` | Deve lançar `UsernameNotFoundException` quando o usuário não existir |
+| `authenticatedReturnUserWhenUserExists` | Deve retornar o `User` autenticado quando o usuário existir |
+| `authenticatedShouldThrowUserNotFoundExceptionWhenUserDoesNotExists` | Deve lançar `UsernameNotFoundException` quando o usuário não estiver autenticado |
+| `getMeShouldReturnUserDTOWhenUserAunthenticated` | Deve retornar `UserDTO` com os dados corretos quando autenticado |
+| `getMeShouldThrowUserNotFoundExceptionWhenUserNotAuthenticated` | Deve lançar `UsernameNotFoundException` quando não autenticado |
+
+---
+
+### ✅ ProductService
+
+| Teste | Cenário |
+|-------|---------|
+| `findByIdShouldReturnProductDTOWhenIdExists` | Deve retornar `ProductDTO` quando o ID existir |
+| `findByIdShouldReturnResourceNotFoundExceptionWhenIdDoesNotExists` | Deve lançar `ResourceNotFoundException` quando o ID não existir |
+| `findAllShouldReturnPagedProductMinDTO` | Deve retornar página de `ProductMinDTO` |
+| `insertShouldReturnProductDTO` | Deve retornar `ProductDTO` ao inserir produto |
+| `updateShouldReturnProductDTOWhenIdExists` | Deve retornar `ProductDTO` ao atualizar produto existente |
+| `updateShouldReturnResourceNotFoundExceptionWhenIdDoesNotExists` | Deve lançar `ResourceNotFoundException` ao atualizar ID inexistente |
+| `deleteShouldDoNothingWhenIdExists` | Não deve lançar exceção ao deletar produto existente |
+| `deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExists` | Deve lançar `ResourceNotFoundException` ao deletar ID inexistente |
+| `deleteShouldThrowDatabaseExceptionWhenDependentId` | Deve lançar `DatabaseException` ao deletar produto com dependência |
+
+---
+
+### ✅ OrderService
+
+| Teste | Cenário |
+|-------|---------|
+| `findByIdShouldReturnOrderDTOWhenIdExistsAndAdminLogged` | Deve retornar `OrderDTO` quando o ID existir e o ADMIN estiver logado |
+| `findByIdShouldReturnOrderDTOWhenIdExistsAndSelfClientLogged` | Deve retornar `OrderDTO` quando o ID existir e o próprio cliente estiver logado |
+| `findByIdShouldThrowForbiddenExceptionWhenIdExistsAndOtherClientLogged` | Deve lançar `ForbiddenException` quando outro cliente tentar acessar o pedido |
+| `findByIdShouldThrowResourceNotFoundExceptionWhenIdDoesNotExists` | Deve lançar `ResourceNotFoundException` quando o ID não existir |
+| `insertShouldReturnOrderDTOWhenAdminLogged` | Deve retornar `OrderDTO` ao inserir pedido com ADMIN logado |
+| `insertShouldThrowsUsernameNotFoundExceptionWhenUserNotLogged` | Deve lançar `UsernameNotFoundException` quando nenhum usuário estiver logado |
+| `insertShouldThrowsEntityNotFoundExceptionWhenOrderProductIdDoesNotExists` | Deve lançar `EntityNotFoundException` quando o produto do pedido não existir |
+
+---
+
 ## 📌 Endpoints da API
 
-Abaixo estão listados os principais endpoints disponíveis na aplicação.  
+Abaixo estão listados os principais endpoints disponíveis na aplicação.
+
 ---
 
 ### 🔐 Autenticação
@@ -38,7 +117,6 @@ Abaixo estão listados os principais endpoints disponíveis na aplicação.
 | Método | Endpoint | Descrição |
 |-------|---------|----------|
 | POST | `/auth/login` | Realiza login e retorna o token JWT |
-
 
 ---
 
@@ -74,7 +152,6 @@ Abaixo estão listados os principais endpoints disponíveis na aplicação.
 |-------|---------|----------|--------|
 | GET | `/categories` | Lista todas as categorias | Público |
 
-
 ---
 
 > 📌 **Observação:**  
@@ -101,8 +178,7 @@ A seguir estão alguns exemplos de requisições e respostas da API.
   "username": "alex@email.com",
   "password": "123456"
 }
-
-````
+```
 
 📥 Response — 200 OK
 
@@ -112,8 +188,9 @@ A seguir estão alguns exemplos de requisições e respostas da API.
   "token_type": "Bearer",
   "expires_in": 3600
 }
+```
 
-````
+---
 
 ### 📦 Listar Produtos
 
@@ -122,60 +199,55 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 📥 Response — 200 OK
 
 ```json
-
 {
-    "content": [
-        {
-            "id": 1,
-            "name": "Meu novo produto",
-            "price": 200.0,
-            "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg"
-        }
- ],
-    "pageable": {
-        "pageNumber": 0,
-        "pageSize": 20,
-        "sort": {
-            "empty": true,
-            "unsorted": true,
-            "sorted": false
-        },
-        "offset": 0,
-        "unpaged": false,
-        "paged": true
+  "content": [
+    {
+      "id": 1,
+      "name": "Meu novo produto",
+      "price": 200.0,
+      "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg"
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 20,
+    "sort": {
+      "empty": true,
+      "unsorted": true,
+      "sorted": false
     },
-    "totalPages": 1,
-    "totalElements": 1,
-    "last": false,
-    "size": 20,
+    "offset": 0,
+    "unpaged": false,
+    "paged": true
+  },
+  "totalPages": 1,
+  "totalElements": 1,
+  "last": false,
+  "size": 20
+}
+```
 
-````
+---
 
 ### 📦 Buscar Produto por ID
 
-**GET** ` /products/{id}`
+**GET** `/products/{id}`
 
 📥 Response — 200 OK
 
 ```json
 {
-    "id": 1,
-    "name": "Meu novo produto",
-    "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Qui ad, adipisci illum ipsam velit et odit eaque reprehenderit ex maxime delectus dolore labore, quisquam quae tempora natus esse aliquam veniam doloremque quam minima culpa alias maiores commodi. Perferendis enim",
-    "price": 200.0,
-    "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
-    "categories": [
-        {
-            "id": 2,
-            "name": "Eletrônicos"
-        },
-        {
-            "id": 3,
-            "name": "Computadores"
-        }
-    ]
+  "id": 1,
+  "name": "Meu novo produto",
+  "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit...",
+  "price": 200.0,
+  "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
+  "categories": [
+    { "id": 2, "name": "Eletrônicos" },
+    { "id": 3, "name": "Computadores" }
+  ]
 }
-````
+```
 
 ---
 
@@ -183,48 +255,36 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 
 **POST** `/products`
 
-
 #### 📤 Request
 
 ```json
 {
-    "name": "Meu novo produto",
-    "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Qui ad, adipisci illum ipsam velit et odit eaque reprehenderit ex maxime delectus dolore labore, quisquam quae tempora natus esse aliquam veniam doloremque quam minima culpa alias maiores commodi. Perferendis enim",
-    "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
-    "price": 200.0,
-    "categories": [
-        {
-            "id":2
-        },
-        {
-            "id": 3
-        }
-    ]
+  "name": "Meu novo produto",
+  "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit...",
+  "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
+  "price": 200.0,
+  "categories": [
+    { "id": 2 },
+    { "id": 3 }
+  ]
 }
-````
+```
 
 📥 Response — 201 Created
 
 ```json
 {
-    "id": 26,
-    "name": "Meu novo produto",
-    "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Qui ad, adipisci illum ipsam velit et odit eaque reprehenderit ex maxime delectus dolore labore, quisquam quae tempora natus esse aliquam veniam doloremque quam minima culpa alias maiores commodi. Perferendis enim",
-    "price": 200.0,
-    "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
-    "categories": [
-        {
-            "id": 2,
-            "name": null
-        },
-        {
-            "id": 3,
-            "name": null
-        }
-    ]
+  "id": 26,
+  "name": "Meu novo produto",
+  "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit...",
+  "price": 200.0,
+  "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
+  "categories": [
+    { "id": 2, "name": null },
+    { "id": 3, "name": null }
+  ]
 }
-
-````
+```
 
 > 📌 **Observação:**  
 > Esse endpoint é restrito a usuários com perfil administrador.
@@ -236,7 +296,6 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 **PUT** `/products/{id}`
 
 > Header:
->
 > ```
 > Authorization: Bearer <token>
 > ```
@@ -245,43 +304,32 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 
 ```json
 {
-    "name": "Meu novo produto",
-    "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Qui ad, adipisci illum ipsam velit et odit eaque reprehenderit ex maxime delectus dolore labore, quisquam quae tempora natus esse aliquam veniam doloremque quam minima culpa alias maiores commodi. Perferendis enim",
-    "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
-    "price": 200.0,
-     "categories": [
-        {
-            "id": 2
-        },
-        {
-            "id": 3
-        }
-    ]
+  "name": "Meu novo produto",
+  "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit...",
+  "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
+  "price": 200.0,
+  "categories": [
+    { "id": 2 },
+    { "id": 3 }
+  ]
 }
+```
 
-````
 📥 Response — 200 OK
 
 ```json
 {
-    "id": 1,
-    "name": "Meu novo produto",
-    "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Qui ad, adipisci illum ipsam velit et odit eaque reprehenderit ex maxime delectus dolore labore, quisquam quae tempora natus esse aliquam veniam doloremque quam minima culpa alias maiores commodi. Perferendis enim",
-    "price": 200.0,
-    "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
-    "categories": [
-        {
-            "id": 2,
-            "name": "Eletrônicos"
-        },
-        {
-            "id": 3,
-            "name": "Computadores"
-        }
-    ]
+  "id": 1,
+  "name": "Meu novo produto",
+  "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit...",
+  "price": 200.0,
+  "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
+  "categories": [
+    { "id": 2, "name": "Eletrônicos" },
+    { "id": 3, "name": "Computadores" }
+  ]
 }
-
-````
+```
 
 ---
 
@@ -290,7 +338,6 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 **DELETE** `/products/{id}`
 
 > Header:
->
 > ```
 > Authorization: Bearer <token>
 > ```
@@ -301,14 +348,11 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 
 ---
 
----
-
 ### 👤 Buscar Usuário Logado
 
 **GET** `/users/me`
 
 > Header:
->
 > ```
 > Authorization: Bearer <token>
 > ```
@@ -317,17 +361,18 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 
 ```json
 {
-    "id": 2,
-    "name": "Alex Green",
-    "email": "alex@gmail.com",
-    "phone": "977777777",
-    "birthDate": "1987-12-13",
-    "roles": [
-        "ROLE_CLIENT",
-        "ROLE_ADMIN"
-    ]
+  "id": 2,
+  "name": "Alex Green",
+  "email": "alex@gmail.com",
+  "phone": "977777777",
+  "birthDate": "1987-12-13",
+  "roles": [
+    "ROLE_CLIENT",
+    "ROLE_ADMIN"
+  ]
 }
 ```
+
 ---
 
 ### 🛒 Buscar Pedido por ID
@@ -335,7 +380,6 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 **GET** `/orders/{id}`
 
 > Header:
->
 > ```
 > Authorization: Bearer <token>
 > ```
@@ -359,6 +403,7 @@ A seguir estão alguns exemplos de requisições e respostas da API.
   ]
 }
 ```
+
 ---
 
 ### ➕ Criar Novo Pedido
@@ -366,7 +411,6 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 **POST** `/orders`
 
 > Header:
->
 > ```
 > Authorization: Bearer <token>
 > ```
@@ -376,52 +420,44 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 ```json
 {
   "items": [
-    {
-      "productId": 1,
-      "quantity": 2
-    },
-    {
-      "productId": 5,
-      "quantity": 1
-    }
+    { "productId": 1, "quantity": 2 },
+    { "productId": 5, "quantity": 1 }
   ]
 }
-
 ```
 
 📥 Response — 201 Created
 
 ```json
 {
-    "id": 4,
-    "momment": "2026-02-05T15:20:23.928324800Z",
-    "status": "WAITING_PAYMENT",
-    "client": {
-        "id": 2,
-        "name": "Alex Green"
+  "id": 4,
+  "momment": "2026-02-05T15:20:23.928324800Z",
+  "status": "WAITING_PAYMENT",
+  "client": {
+    "id": 2,
+    "name": "Alex Green"
+  },
+  "payment": null,
+  "items": [
+    {
+      "productId": 1,
+      "name": "The Lord of the Rings",
+      "price": 90.5,
+      "quantity": 2,
+      "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
+      "subTotal": 181.0
     },
-    "payment": null,
-    "items": [
-        {
-            "productId": 1,
-            "name": "The Lord of the Rings",
-            "price": 90.5,
-            "quantity": 2,
-            "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/1-big.jpg",
-            "subTotal": 181.0
-        },
-        {
-            "productId": 5,
-            "name": "Rails for Dummies",
-            "price": 100.99,
-            "quantity": 1,
-            "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/5-big.jpg",
-            "subTotal": 100.99
-        }
-    ],
-    "total": 281.99
+    {
+      "productId": 5,
+      "name": "Rails for Dummies",
+      "price": 100.99,
+      "quantity": 1,
+      "imgUrl": "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/5-big.jpg",
+      "subTotal": 100.99
+    }
+  ],
+  "total": 281.99
 }
-
 ```
 
 ---
@@ -434,29 +470,8 @@ A seguir estão alguns exemplos de requisições e respostas da API.
 
 ```json
 [
-  {
-    "id": 1,
-    "name": "Eletrônicos"
-  },
-  {
-    "id": 2,
-    "name": "Livros"
-  },
-  {
-    "id": 3,
-    "name": "Acessórios"
-  }
+  { "id": 1, "name": "Eletrônicos" },
+  { "id": 2, "name": "Livros" },
+  { "id": 3, "name": "Acessórios" }
 ]
 ```
-
-
-
-
-
-
-
-
-
-
-
-
