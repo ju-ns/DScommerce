@@ -1,4 +1,4 @@
-package com.devsuperior.dscommerce.controlers;
+package com.devsuperior.dscommerce.controllers;
 
 import com.devsuperior.dscommerce.dto.ProductDTO;
 import com.devsuperior.dscommerce.dto.ProductMinDTO;

@@ -1,6 +1,5 @@
-package com.devsuperior.dscommerce.controlers;
+package com.devsuperior.dscommerce.controllers;
 
-import com.devsuperior.dscommerce.dto.ProductDTO;
 import com.devsuperior.dscommerce.dto.UserDTO;
 import com.devsuperior.dscommerce.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
